@@ -10,8 +10,8 @@
 #include <TimerOne.h>
 #include "FastLED.h"
 
-const unsigned int numberOfRows = 3;                          // Number of rows
-const unsigned int numberOfColumns = 3;                       // Number of coumns
+const unsigned int numberOfRows = 10;                          // Number of rows
+const unsigned int numberOfColumns = 6;                       // Number of coumns
 const unsigned int NUM_LEDS = numberOfRows * numberOfColumns; // Number of LEDs
 
 CRGB leds[NUM_LEDS]; // Defining leds table for FastLed
@@ -28,9 +28,9 @@ struct pointOnMatrix {
 
 // Original colours for leds.
 const unsigned int empty = 0;
-const unsigned int red = 1;
-const unsigned int green = 2;
-const unsigned int orange = 3;
+const unsigned int purple = 1;
+const unsigned int Orange = 2;
+const unsigned int blue = 3;
 
 // Directions for the snake head
 const unsigned int directionUp = 0;
@@ -39,7 +39,7 @@ const unsigned int directionDown = 2;
 const unsigned int directionLeft = 3;
 
 // Direction variable, initial set-up to "right"
-const int directionInitial = directionRight;
+const int directionInitial = directionDown;
 int static snakeDirection = directionInitial;
 
 // LED Matrix
@@ -100,9 +100,9 @@ void loop() {
   // We first check if the button have been pressed, using a "debouncer"
 
     leftButtonValue = analogRead(leftButton);
-  Serial.print("leftButtonValue : ");
-  Serial.print(leftButtonValue);
-  Serial.print("\n");
+  // Serial.print("leftButtonValue : ");
+  // Serial.print(leftButtonValue);
+  // Serial.print("\n");
     if (leftButtonValue == 0 && lastLeftButtonValue > 800) {
 //     // If the button 1 has been pressed, we go left
         prevDirection();
@@ -125,7 +125,7 @@ void loop() {
 //  Serial.print("We're on the loop, and going to move the snake. \n");
   moveSnake();
 //  Serial.print("Snake moved, we will print the following on the matrix : \n");
-//  digitalOutputDisplay();
+  digitalOutputDisplay();
 
   // We then light up the physical display of the led matrix, according to the values stored
 //  Serial.print("We're on the loop, and going to update the physical display. \n");
@@ -191,7 +191,7 @@ void resetSnake() {
   clearLEDMatrix();
 
   Serial.print("We define the snake head on the starting point : ");
-  LEDMatrix[startingPoint.lineCoordinate][startingPoint.columnCoordinate] = orange;  // Add starting dot
+  LEDMatrix[startingPoint.lineCoordinate][startingPoint.columnCoordinate] = blue;  // Add starting dot
   snakehead = startingPoint;                         					   		   // We put the snake head on the starting point.
   snake[0].lineCoordinate = snakehead.lineCoordinate;            				    // We set the head of the snake.
   snake[0].columnCoordinate = snakehead.columnCoordinate;
@@ -203,7 +203,7 @@ void resetSnake() {
 
   generateApple();    								                             // We define a spot for the apple.
   Serial.print("The apple will be placed on (seen from resetSnake) : ");
-  LEDMatrix[apple.lineCoordinate][apple.columnCoordinate] = green;         // We put the apple in the matrix, as the spot at which it has been generated.
+  LEDMatrix[apple.lineCoordinate][apple.columnCoordinate] = Orange;         // We put the apple in the matrix, as the spot at which it has been generated.
 
   Serial.print("{");
   Serial.print(apple.lineCoordinate);
@@ -255,9 +255,9 @@ void outputDisplay() {
   for(int rowIndex = 0; rowIndex < numberOfRows; rowIndex++) {
     for(int columnIndex = 0; columnIndex < numberOfColumns; columnIndex++) {
       if(LEDMatrix[rowIndex][columnIndex] == empty) {leds[rowIndex*numberOfRows + columnIndex] = CRGB::Black;}
-      if(LEDMatrix[rowIndex][columnIndex] == red) {leds[rowIndex*numberOfRows + columnIndex] = CRGB::Red;}
-      if(LEDMatrix[rowIndex][columnIndex] == green) {leds[rowIndex*numberOfRows + columnIndex] = CRGB::Green;}
-      if(LEDMatrix[rowIndex][columnIndex] == orange) {leds[rowIndex*numberOfRows + columnIndex] = CRGB::Orange;}
+      if(LEDMatrix[rowIndex][columnIndex] == purple) {leds[rowIndex*numberOfRows + columnIndex] = CRGB::purple;}
+      if(LEDMatrix[rowIndex][columnIndex] == Orange) {leds[rowIndex*numberOfRows + columnIndex] = CRGB::Orange;}
+      if(LEDMatrix[rowIndex][columnIndex] == blue) {leds[rowIndex*numberOfRows + columnIndex] = CRGB::blue;}
     }
   }
   // So we'll avoid this with a software logical re-work
@@ -266,19 +266,20 @@ void outputDisplay() {
   for(int rowIndex = 0; rowIndex < numberOfRows; rowIndex++) {
     for(int columnIndex = 0; columnIndex < numberOfColumns; columnIndex++) {
       // So we'll invert one line every two compared to our digital matrix
-      // If we're on an even row, we're fine, everything is straightfoward
-      if(rowIndex%2 == 0) {
-        if(LEDMatrix[rowIndex][columnIndex] == empty) {leds[rowIndex*numberOfRows + columnIndex] = CRGB::Black;}
-        if(LEDMatrix[rowIndex][columnIndex] == red) {leds[rowIndex*numberOfRows + columnIndex] = CRGB::Red;}
-        if(LEDMatrix[rowIndex][columnIndex] == green) {leds[rowIndex*numberOfRows + columnIndex] = CRGB::Green;}
-        if(LEDMatrix[rowIndex][columnIndex] == orange) {leds[rowIndex*numberOfRows + columnIndex] = CRGB::Orange;}
+      // If we're on an even column, we're fine, everything is straightfoward
+      if(columnIndex%2 == 0) {
+        
+        if(LEDMatrix[rowIndex][columnIndex] == empty) {leds[(columnIndex + 1)*numberOfRows - rowIndex - 1] = CRGB::Black;}
+        if(LEDMatrix[rowIndex][columnIndex] == purple) {leds[(columnIndex + 1)*numberOfRows - rowIndex - 1] = CRGB::Purple;}
+        if(LEDMatrix[rowIndex][columnIndex] == Orange) {leds[(columnIndex + 1)*numberOfRows - rowIndex - 1] = CRGB::Orange;}
+        if(LEDMatrix[rowIndex][columnIndex] == blue) {leds[(columnIndex + 1)*numberOfRows - rowIndex - 1] = CRGB::Blue;}
       }
-      // If we're on an uneven row, we do a mathematical trick to invert it
-      else if(rowIndex%2 == 1) {
-        if(LEDMatrix[rowIndex][columnIndex] == empty) {leds[(rowIndex+1)*numberOfRows - columnIndex - 1] = CRGB::Black;}
-        if(LEDMatrix[rowIndex][columnIndex] == red) {leds[(rowIndex+1)*numberOfRows - columnIndex - 1] = CRGB::Red;}
-        if(LEDMatrix[rowIndex][columnIndex] == green) {leds[(rowIndex+1)*numberOfRows - columnIndex - 1] = CRGB::Green;}
-        if(LEDMatrix[rowIndex][columnIndex] == orange) {leds[(rowIndex+1)*numberOfRows - columnIndex - 1] = CRGB::Orange;}
+      // If we're on an uneven column, we do a mathematical trick to invert it
+      else if(columnIndex%2 == 1) {
+        if(LEDMatrix[rowIndex][columnIndex] == empty) {leds[columnIndex*numberOfRows + rowIndex] = CRGB::Black;}
+        if(LEDMatrix[rowIndex][columnIndex] == purple) {leds[columnIndex*numberOfRows + rowIndex] = CRGB::Purple;}
+        if(LEDMatrix[rowIndex][columnIndex] == Orange) {leds[columnIndex*numberOfRows + rowIndex] = CRGB::Orange;}
+        if(LEDMatrix[rowIndex][columnIndex] == blue) {leds[columnIndex*numberOfRows + rowIndex] = CRGB::Blue;}
       }
     }
   }
@@ -453,7 +454,7 @@ void updateLEDMatrix() {
 
   //Serial.print("We put the snake on it. \n");
   //Serial.print("We find that the snake is on the following places : ");
-  // Then we light up in red the whole snake - except the head, hence the loop starts from 1
+  // Then we light up in Orange the whole snake - except the head, hence the loop starts from 1
   for (int i = 1; i < numberOfRows * numberOfColumns; i++) {
 
     // We scan the matrix, and we light up the dots where the snake is.
@@ -463,25 +464,25 @@ void updateLEDMatrix() {
       Serial.print(", ");
       Serial.print(snake[i].columnCoordinate);
       Serial.print("}, ");*/
-      LEDMatrix[snake[i].lineCoordinate][snake[i].columnCoordinate] = red; // red = 1, so the dot will light up.
+      LEDMatrix[snake[i].lineCoordinate][snake[i].columnCoordinate] = purple; // purple = 1, so the dot will light up.
     }
   }
 /*
-  Serial.print("We moreover print in orange the snake's head, which is in {");
+  Serial.print("We moreover print in blue the snake's head, which is in {");
   Serial.print(snakehead.lineCoordinate);
   Serial.print(", ");
   Serial.print(snakehead.columnCoordinate);
   Serial.print("}. \n");*/
-  LEDMatrix[snakehead.lineCoordinate][snakehead.columnCoordinate] = orange; // orange = 3, so the dot will light up.
+  LEDMatrix[snakehead.lineCoordinate][snakehead.columnCoordinate] = blue; // blue = 3, so the dot will light up.
 
 /*
-  Serial.print("And in green the apple, which is in {");
+  Serial.print("And in Orange the apple, which is in {");
   Serial.print(apple.lineCoordinate);
   Serial.print(", ");
   Serial.print(apple.columnCoordinate);
   Serial.print("}. \n");*/
   // And we light up the apple, using its coordinates
-  LEDMatrix[apple.lineCoordinate][apple.columnCoordinate] = green; // green = 2, so the dot will light up.
+  LEDMatrix[apple.lineCoordinate][apple.columnCoordinate] = Orange; // Orange = 2, so the dot will light up.
 }
 
 void generateApple() {
@@ -525,10 +526,10 @@ void endGame() {
   // We light up the rows one by one, with .2 sec of delay between each
   for (int i = 0; i < numberOfRows; i++) {
     for (int j = 0; j < numberOfColumns; j++) {
-      LEDMatrix[i][j] = green;
+      LEDMatrix[i][j] = Orange;
+    }
       updateLEDMatrix();
       outputDisplay();
-    }
     
     delay(200);
   }
