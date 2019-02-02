@@ -247,9 +247,7 @@ void clearLEDMatrix() {
 
 // We update the physical display of the LED matrix
 void outputDisplay() {
-  
-byte LEDMatrix[numberOfRows][numberOfColumns];
-  
+   
   for(int rowIndex = 0; rowIndex < numberOfRows; rowIndex++) {
     for(int columnIndex = 0; columnIndex < numberOfColumns; columnIndex++) {
       if(LEDMatrix[rowIndex][columnIndex] == empty) {leds[rowIndex*numberOfRows + columnIndex] = CRGB::Black;}
