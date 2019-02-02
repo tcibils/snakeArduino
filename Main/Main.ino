@@ -10,8 +10,8 @@
 #include <TimerOne.h>
 #include "FastLED.h"
 
-const unsigned int numberOfRows = 6;                          // Number of rows
-const unsigned int numberOfColumns = 6;                       // Number of coumns
+const unsigned int numberOfRows = 3;                          // Number of rows
+const unsigned int numberOfColumns = 3;                       // Number of coumns
 const unsigned int NUM_LEDS = numberOfRows * numberOfColumns; // Number of LEDs
 
 CRGB leds[NUM_LEDS]; // Defining leds table for FastLed
@@ -100,20 +100,20 @@ void loop() {
   // We first check if the button have been pressed, using a "debouncer"
 
     leftButtonValue = analogRead(leftButton);
-//  Serial.print("leftButtonValue : ");
-//  Serial.print(leftButtonValue);
-//  Serial.print("\n");
-    if (leftButtonValue == 0 && lastLeftButtonValue > 1000) {
+  Serial.print("leftButtonValue : ");
+  Serial.print(leftButtonValue);
+  Serial.print("\n");
+    if (leftButtonValue == 0 && lastLeftButtonValue > 800) {
 //     // If the button 1 has been pressed, we go left
         prevDirection();
    }
   lastLeftButtonValue = leftButtonValue; // And we update what we read just after
    
     rightButtonValue = analogRead(rightButton);
-//  Serial.print("rightButtonValue : ");
-//  Serial.print(rightButtonValue);
-//  Serial.print("\n")
-    if (rightButtonValue == 0 && lastRightButtonValue > 1000) { 
+ // Serial.print("rightButtonValue : ");
+ // Serial.print(rightButtonValue);
+ // Serial.print("\n");
+    if (rightButtonValue == 0 && lastRightButtonValue > 800) { 
      // If the button 2 has been pressed, we go right
         nextDirection();
     }
