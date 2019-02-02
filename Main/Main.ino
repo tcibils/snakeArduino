@@ -247,13 +247,39 @@ void clearLEDMatrix() {
 
 // We update the physical display of the LED matrix
 void outputDisplay() {
-   
+
+   /*
+   // This works but with an unpractical soldering
+   // When setting up the LED lines, you'd need the "info" cable on the bottom of each line to be wired to the top of the next one, doing kinda "S"
+   // So you'd need to run the cable accross the whole plate
   for(int rowIndex = 0; rowIndex < numberOfRows; rowIndex++) {
     for(int columnIndex = 0; columnIndex < numberOfColumns; columnIndex++) {
       if(LEDMatrix[rowIndex][columnIndex] == empty) {leds[rowIndex*numberOfRows + columnIndex] = CRGB::Black;}
       if(LEDMatrix[rowIndex][columnIndex] == red) {leds[rowIndex*numberOfRows + columnIndex] = CRGB::Red;}
       if(LEDMatrix[rowIndex][columnIndex] == green) {leds[rowIndex*numberOfRows + columnIndex] = CRGB::Green;}
       if(LEDMatrix[rowIndex][columnIndex] == orange) {leds[rowIndex*numberOfRows + columnIndex] = CRGB::Orange;}
+    }
+  }
+  // So we'll avoid this with a software logical re-work
+  */
+
+  for(int rowIndex = 0; rowIndex < numberOfRows; rowIndex++) {
+    for(int columnIndex = 0; columnIndex < numberOfColumns; columnIndex++) {
+      // So we'll invert one line every two compared to our digital matrix
+      // If we're on an even row, we're fine, everything is straightfoward
+      if(rowIndex%2 == 0) {
+        if(LEDMatrix[rowIndex][columnIndex] == empty) {leds[rowIndex*numberOfRows + columnIndex] = CRGB::Black;}
+        if(LEDMatrix[rowIndex][columnIndex] == red) {leds[rowIndex*numberOfRows + columnIndex] = CRGB::Red;}
+        if(LEDMatrix[rowIndex][columnIndex] == green) {leds[rowIndex*numberOfRows + columnIndex] = CRGB::Green;}
+        if(LEDMatrix[rowIndex][columnIndex] == orange) {leds[rowIndex*numberOfRows + columnIndex] = CRGB::Orange;}
+      }
+      // If we're on an uneven row, we do a mathematical trick to invert it
+      else if(rowIndex%2 == 1) {
+        if(LEDMatrix[rowIndex][columnIndex] == empty) {leds[(rowIndex+1)*numberOfRows - columnIndex - 1] = CRGB::Black;}
+        if(LEDMatrix[rowIndex][columnIndex] == red) {leds[(rowIndex+1)*numberOfRows - columnIndex - 1] = CRGB::Red;}
+        if(LEDMatrix[rowIndex][columnIndex] == green) {leds[(rowIndex+1)*numberOfRows - columnIndex - 1] = CRGB::Green;}
+        if(LEDMatrix[rowIndex][columnIndex] == orange) {leds[(rowIndex+1)*numberOfRows - columnIndex - 1] = CRGB::Orange;}
+      }
     }
   }
   
