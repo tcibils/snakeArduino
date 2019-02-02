@@ -1,31 +1,32 @@
+/* 
+ *  SNAKE ON A LED MATRIX
+ *  Creator : Thomas Cibils
+ *  Last update : 02.02.2019
+ *  Code original source : http://forum.arduino.cc/index.php?topic=8280.0
+ *  FastLED tuto : https://github.com/FastLED/FastLED/wiki/Basic-usage - used for WS2812B 5050 RGB LED Strip 5M 150 300 Leds 144 60LED/M Individual Addressable 5V
+ *  */
+
 #include <Bounce2.h>
 #include <TimerOne.h>
 #include "FastLED.h"
-// FastLED tuto : https://github.com/FastLED/FastLED/wiki/Basic-usage - used for WS2812B 5050 RGB LED Strip 5M 150 300 Leds 144 60LED/M Individual Addressable 5V
 
-// Snake on a dotLEDMatrix
-// Original source : http://forum.arduino.cc/index.php?topic=8280.0
+const unsigned int numberOfRows = 6;                          // Number of rows
+const unsigned int numberOfColumns = 6;                       // Number of coumns
+const unsigned int NUM_LEDS = numberOfRows * numberOfColumns; // Number of LEDs
 
-const unsigned int numberOfRows = 6;        // Number of rows
-const unsigned int numberOfColumns = 6;      // Number of coumns
-
-const unsigned int NUM_LEDS = numberOfRows * numberOfColumns;
-
-CRGB leds[NUM_LEDS];
+CRGB leds[NUM_LEDS]; // Defining leds table for FastLed
 
 // Pin used from the arduino
-const unsigned int leftButton = A1;              				// Input pin for button 1
-const unsigned int rightButton = A2;              			// Input pin for button 2
-
-#define DATA_PIN 6
+const unsigned int leftButton = A1;       // Input pin for button 1
+const unsigned int rightButton = A2;      // Input pin for button 2
+#define DATA_PIN 6                        // Output pin for FastLed
 
 struct pointOnMatrix {
   int lineCoordinate;
   int columnCoordinate;
 };
 
-// Original colours for leds. Will be used as "if > 0, set LED on"
-// I keep those parameters in case I'd someday like to do something colorful.
+// Original colours for leds.
 const unsigned int empty = 0;
 const unsigned int red = 1;
 const unsigned int green = 2;
@@ -53,13 +54,13 @@ byte LEDMatrix[numberOfRows][numberOfColumns];
 // snake[7] = (-1,-1) means that the snake is shorter than 7 body parts.
 pointOnMatrix snake[numberOfRows * numberOfColumns];
 
+// New snake is used to make snake move forward
 pointOnMatrix newsnake[numberOfRows * numberOfColumns];
+
 pointOnMatrix startingPoint = {1, 0};     // Game starting point, line 1, column 0.
-
 pointOnMatrix snakehead = {0, 0};       // Starting point for the snake head
-// pointOnMatrix snaketail = {0,0};		// Storing the tail seems useless to me
 
-int applecaught = 0;
+unsigned int applecaught = 0;
 pointOnMatrix apple = {0, 0};         // Sets where the apple is on the matrix
 
 const int moveSpeed = 1000;
@@ -102,30 +103,21 @@ void loop() {
 //  Serial.print("leftButtonValue : ");
 //  Serial.print(leftButtonValue);
 //  Serial.print("\n");
- //   bouncer1.update();
- //   bouncer2.update();
- //   if (bouncer1.read() == LOW) {
     if (leftButtonValue == 0 && lastLeftButtonValue > 1000) {
 //     // If the button 1 has been pressed, we go left
-     prevDirection();
-//    }
+        prevDirection();
    }
-  lastLeftButtonValue = leftButtonValue;
+  lastLeftButtonValue = leftButtonValue; // And we update what we read just after
    
- //   leftButtonValue = bouncer1.read();	// And we update what we read just after
-
     rightButtonValue = analogRead(rightButton);
 //  Serial.print("rightButtonValue : ");
 //  Serial.print(rightButtonValue);
-//  Serial.print("\n");
- //   if (bouncer2.read() == LOW) {
+//  Serial.print("\n")
     if (rightButtonValue == 0 && lastRightButtonValue > 1000) { 
      // If the button 2 has been pressed, we go right
-     nextDirection();
- //   }
+        nextDirection();
     }
-    lastRightButtonValue = rightButtonValue;
- //   rightButtonValue = bouncer2.read();	// And we update what we read just after
+    lastRightButtonValue = rightButtonValue; // And we update what we read just after
   
   // We make the snake digitalized values move
   // This function includes a call to "updateLEDMatrix", so the matrix contains the correct values
