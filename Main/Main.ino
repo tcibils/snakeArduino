@@ -1,5 +1,4 @@
-
-#include <Bounce2.h>
+// #include <Bounce2.h>
 #include <TimerOne.h>
 
 // Snake on a dotLEDMatrix
@@ -552,4 +551,3 @@ void endGame() {
   // And we restart the game.
   resetSnake();
 }
-
