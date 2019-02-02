@@ -1,8 +1,7 @@
 #include <Bounce2.h>
 #include <TimerOne.h>
 #include "FastLED.h"
-#define NUM_LEDS 60
-#define DATA_PIN 6
+// FastLED tuto : https://github.com/FastLED/FastLED/wiki/Basic-usage - used for WS2812B 5050 RGB LED Strip 5M 150 300 Leds 144 60LED/M Individual Addressable 5V
 
 // Snake on a dotLEDMatrix
 // Original source : http://forum.arduino.cc/index.php?topic=8280.0
@@ -10,12 +9,15 @@
 const unsigned int numberOfRows = 6;        // Number of rows
 const unsigned int numberOfColumns = 6;      // Number of coumns
 
+const unsigned int NUM_LEDS = numberOfRows * numberOfColumns;
+
+CRGB leds[NUM_LEDS];
+
 // Pin used from the arduino
 const unsigned int leftButton = A1;              				// Input pin for button 1
 const unsigned int rightButton = A2;              			// Input pin for button 2
 
-const unsigned int columnPin[numberOfColumns] = {7, 6, 5, 4, 3, 2}; // Output pins for columns (negatives)
-const unsigned int linePin[numberOfRows] = {13, 12, 11, 10, 9, 8}; // Output pins for rows (positives)
+#define DATA_PIN 6
 
 struct pointOnMatrix {
   int lineCoordinate;
@@ -79,13 +81,7 @@ void setup() {
   // randomSeed(analogRead(5));
 
   // Set matrix pins to output
-  for (int i = 0; i < numberOfRows; i++) {
-    pinMode(linePin[i], OUTPUT);
-  }
-
-  for (int j = 0; j < numberOfColumns; j++) {
-    pinMode(columnPin[j], OUTPUT);
-  }
+  FastLED.addLeds<NEOPIXEL, DATA_PIN>(leds, NUM_LEDS);
 
   // Set button pins to input
   pinMode(leftButton, INPUT);
@@ -242,7 +238,7 @@ void clearLEDMatrix() {
   for (int i = 0; i < numberOfRows; i++)  {
     for (int j = 0; j < numberOfColumns; j++) {
 
-      LEDMatrix[i][j] = 0;
+      LEDMatrix[i][j] = empty;
       //Serial.print(LEDMatrix[i][j]);
     //  if (j < numberOfColumns - 1) {
         // Serial.print(", ");
@@ -259,47 +255,20 @@ void clearLEDMatrix() {
 
 // We update the physical display of the LED matrix
 void outputDisplay() {
-
-  // Store the row number of the matrix that is currently lit and the time it was lit
-  // The keyword "static" means that the variable's values are not lost between calls
-  static int currentRow;
-  static unsigned long lastUpdateTime;
-
-  // Get the current time
-  unsigned long timeNow = millis();
-
-  // Is it time to move to the next row of the matrix?
-  if (timeNow - lastUpdateTime >= 3) {
-
-    // Turn the previous line off
-    digitalWrite(linePin[currentRow], LOW);
-
-    // Update the current matrix row
-    if (currentRow < numberOfRows) {
-      currentRow++; 
+  
+byte LEDMatrix[numberOfRows][numberOfColumns];
+  
+  for(int rowIndex = 0; rowIndex < numberOfRows; rowIndex++) {
+    for(int columnIndex = 0; columnIndex < numberOfColumns; columnIndex++) {
+      if(LEDMatrix[rowIndex][columnIndex] == empty) {leds[rowIndex*numberOfRows + columnIndex] = CRGB::Black;}
+      if(LEDMatrix[rowIndex][columnIndex] == red) {leds[rowIndex*numberOfRows + columnIndex] = CRGB::Red;}
+      if(LEDMatrix[rowIndex][columnIndex] == green) {leds[rowIndex*numberOfRows + columnIndex] = CRGB::Green;}
+      if(LEDMatrix[rowIndex][columnIndex] == orange) {leds[rowIndex*numberOfRows + columnIndex] = CRGB::Orange;}
     }
-    else {
-      currentRow = 0;
-    }
-   
-    // We then proceed column by column
-    for (int j = 0; j < numberOfColumns; j++) {
-      // A column must be 0=LOW to receive electricity and light up, and 1=HIGH to block it and hence stay off.
-      // If the LEDMatrix contains a value >0, ie red, orange or green, the dot should light up
-      if (LEDMatrix[currentRow][j] > 0) {
-        // We hence set this column to LOW to allow the electricity to flow in it
-        digitalWrite(columnPin[j], LOW);
-      }
-      else {
-        // On the other hand, if the value is 0, we set the column to HIGH to block the electricity
-        digitalWrite(columnPin[j], HIGH);
-      }
-    }
-   
-    // We light up the current row and record the time it was lit
-    digitalWrite(linePin[currentRow], HIGH);
-    lastUpdateTime = timeNow;
   }
+  
+  // Display the matrix physically
+  FastLED.show(); 
 }
 
 // We update the digital display of the LED matrix
