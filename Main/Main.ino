@@ -1,5 +1,8 @@
-// #include <Bounce2.h>
+#include <Bounce2.h>
 #include <TimerOne.h>
+#include "FastLED.h"
+#define NUM_LEDS 60
+#define DATA_PIN 6
 
 // Snake on a dotLEDMatrix
 // Original source : http://forum.arduino.cc/index.php?topic=8280.0
