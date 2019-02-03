@@ -31,6 +31,7 @@ const unsigned int empty = 0;
 const unsigned int purple = 1;
 const unsigned int Orange = 2;
 const unsigned int blue = 3;
+const unsigned int Red = 4;
 
 // Directions for the snake head
 const unsigned int directionUp = 0;
@@ -63,7 +64,7 @@ pointOnMatrix snakehead = {0, 0};       // Starting point for the snake head
 unsigned int applecaught = 0;
 pointOnMatrix apple = {0, 0};         // Sets where the apple is on the matrix
 
-const int moveSpeed = 1000;
+const int moveSpeed = 650;
 
 unsigned long lastMillis = 0;
 
@@ -100,20 +101,20 @@ void loop() {
   // We first check if the button have been pressed, using a "debouncer"
 
     leftButtonValue = analogRead(leftButton);
-  // Serial.print("leftButtonValue : ");
-  // Serial.print(leftButtonValue);
+ //  Serial.print("leftButtonValue : ");
+ //  Serial.print(leftButtonValue);
   // Serial.print("\n");
-    if (leftButtonValue == 0 && lastLeftButtonValue > 800) {
+    if (leftButtonValue < 200 && lastLeftButtonValue > 800) {
 //     // If the button 1 has been pressed, we go left
         prevDirection();
    }
   lastLeftButtonValue = leftButtonValue; // And we update what we read just after
    
     rightButtonValue = analogRead(rightButton);
- // Serial.print("rightButtonValue : ");
+ // Serial.print(" - rightButtonValue : ");
  // Serial.print(rightButtonValue);
  // Serial.print("\n");
-    if (rightButtonValue == 0 && lastRightButtonValue > 800) { 
+    if (rightButtonValue < 200 && lastRightButtonValue > 800) { 
      // If the button 2 has been pressed, we go right
         nextDirection();
     }
@@ -125,7 +126,7 @@ void loop() {
 //  Serial.print("We're on the loop, and going to move the snake. \n");
   moveSnake();
 //  Serial.print("Snake moved, we will print the following on the matrix : \n");
-  digitalOutputDisplay();
+//  digitalOutputDisplay();
 
   // We then light up the physical display of the led matrix, according to the values stored
 //  Serial.print("We're on the loop, and going to update the physical display. \n");
@@ -231,14 +232,16 @@ void clearLEDMatrix() {
     for (int j = 0; j < numberOfColumns; j++) {
 
       LEDMatrix[i][j] = empty;
-      //Serial.print(LEDMatrix[i][j]);
-    //  if (j < numberOfColumns - 1) {
-        // Serial.print(", ");
-    //  }
-    //  if (j == numberOfColumns - 1) {
-        //Serial.print("\n");
+    /*  
+      Serial.print(LEDMatrix[i][j]);
+      if (j < numberOfColumns - 1) {
+         Serial.print(", ");
+      }
+      if (j == numberOfColumns - 1) {
+        Serial.print("\n");
 
-    //  }
+      }
+    */
     }
   }
 
@@ -273,6 +276,7 @@ void outputDisplay() {
         if(LEDMatrix[rowIndex][columnIndex] == purple) {leds[(columnIndex + 1)*numberOfRows - rowIndex - 1] = CRGB::Purple;}
         if(LEDMatrix[rowIndex][columnIndex] == Orange) {leds[(columnIndex + 1)*numberOfRows - rowIndex - 1] = CRGB::Orange;}
         if(LEDMatrix[rowIndex][columnIndex] == blue) {leds[(columnIndex + 1)*numberOfRows - rowIndex - 1] = CRGB::Blue;}
+        if(LEDMatrix[rowIndex][columnIndex] == Red) {leds[(columnIndex + 1)*numberOfRows - rowIndex - 1] = CRGB::Red;}
       }
       // If we're on an uneven column, we do a mathematical trick to invert it
       else if(columnIndex%2 == 1) {
@@ -280,6 +284,7 @@ void outputDisplay() {
         if(LEDMatrix[rowIndex][columnIndex] == purple) {leds[columnIndex*numberOfRows + rowIndex] = CRGB::Purple;}
         if(LEDMatrix[rowIndex][columnIndex] == Orange) {leds[columnIndex*numberOfRows + rowIndex] = CRGB::Orange;}
         if(LEDMatrix[rowIndex][columnIndex] == blue) {leds[columnIndex*numberOfRows + rowIndex] = CRGB::Blue;}
+        if(LEDMatrix[rowIndex][columnIndex] == Red) {leds[columnIndex*numberOfRows + rowIndex] = CRGB::Red;}
       }
     }
   }
@@ -522,19 +527,19 @@ void generateApple() {
 void endGame() {
 
   Serial.print("\n GAME OVER \n");
+  delay(1000);
   clearLEDMatrix();
   // We light up the rows one by one, with .2 sec of delay between each
   for (int i = 0; i < numberOfRows; i++) {
     for (int j = 0; j < numberOfColumns; j++) {
-      LEDMatrix[i][j] = Orange;
+      LEDMatrix[i][j] = Red;
     }
-      updateLEDMatrix();
       outputDisplay();
     
-    delay(200);
+    delay(500);
   }
   // It stays on for 4 seconds
-  delay(4000);
+  delay(3500);
 
   Serial.print("We reset the game. \n");
   // And we restart the game.
