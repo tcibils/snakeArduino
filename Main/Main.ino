@@ -140,40 +140,41 @@ void loop() {
 
 void nextDirection() {
 
-  Serial.print("\n Click on right button detected, changing direction. It is now ");
+  // Serial.print("\n Click on right button detected, changing direction. It is now ");
 
   snakeDirection++;
   if (snakeDirection > 3) {
     snakeDirection = 0;
   }
 
-  Serial.print(snakeDirection);
-  Serial.print(". \n");
+  // Serial.print(snakeDirection);
+  // Serial.print(". \n");
 }
 
 void prevDirection() {
-  Serial.print("\n Click on left button detected, changing direction. It is now ");
+  // Serial.print("\n Click on left button detected, changing direction. It is now ");
   snakeDirection--;
   if (snakeDirection < 0) {
     snakeDirection = 3;
   }
-  Serial.print(snakeDirection);
-  Serial.print(". \n");
+  // Serial.print(snakeDirection);
+  // Serial.print(". \n");
 }
 
 // We reset the game, create a 1-dot snake, and an apple.
 void resetSnake() {
 
-  Serial.print("\n We've entered the reset function. \n");
+  // Serial.print("\n We've entered the reset function. \n");
   // Create empty snake
 
-  Serial.print("Snake values created : ");
+  // Serial.print("Snake values created : ");
   for (int i = 0; i < numberOfRows * numberOfColumns; i++)  {
     snake[i].lineCoordinate = -1;
     snake[i].columnCoordinate = -1;
     newsnake[i].lineCoordinate = -1;
     newsnake[i].columnCoordinate = -1;
 
+  /*
     Serial.print("{");
     Serial.print(snake[i].lineCoordinate);
     Serial.print(",");
@@ -184,38 +185,41 @@ void resetSnake() {
     else {
       Serial.print("}. \n");
     }
+    */
   }
 
 
   // Whole LEDMatrix = 0, it's now empty.
-  Serial.print("\n We now clear the Matrix. \n");
+  // Serial.print("\n We now clear the Matrix. \n");
   clearLEDMatrix();
 
-  Serial.print("We define the snake head on the starting point : ");
+  // Serial.print("We define the snake head on the starting point : ");
   LEDMatrix[startingPoint.lineCoordinate][startingPoint.columnCoordinate] = blue;  // Add starting dot
   snakehead = startingPoint;                         					   		   // We put the snake head on the starting point.
   snake[0].lineCoordinate = snakehead.lineCoordinate;            				    // We set the head of the snake.
   snake[0].columnCoordinate = snakehead.columnCoordinate;
+  /*
   Serial.print("{");
   Serial.print(snake[0].lineCoordinate);
   Serial.print(",");
   Serial.print(snake[0].columnCoordinate);
   Serial.print("}. \n");
-
+*/
   generateApple();    								                             // We define a spot for the apple.
-  Serial.print("The apple will be placed on (seen from resetSnake) : ");
+  // Serial.print("The apple will be placed on (seen from resetSnake) : ");
   LEDMatrix[apple.lineCoordinate][apple.columnCoordinate] = Orange;         // We put the apple in the matrix, as the spot at which it has been generated.
 
+  /*
   Serial.print("{");
   Serial.print(apple.lineCoordinate);
   Serial.print(",");
   Serial.print(apple.columnCoordinate);
   Serial.print("}. \n");
-
-  Serial.print("The snake will go to the direction ");
+  */ 
+  // Serial.print("The snake will go to the direction ");
   snakeDirection = directionInitial;												// We also initalize the direction
-  Serial.print(snakeDirection);
-  Serial.print("\n");
+  // Serial.print(snakeDirection);
+  // Serial.print("\n");
 }
 
 // Makes the whole "LEDMatrix" equals to 0, i.e. each LED is off
@@ -491,18 +495,19 @@ void updateLEDMatrix() {
 }
 
 void generateApple() {
-  Serial.print("\n We are now creating an apple. \n");
+  // Serial.print("\n We are now creating an apple. \n");
   // We draw a number for the X and the Y coordinates
   // TO BE CLARIFIED : HOW DOES RANDOM WORK
   const int appleLineNumber = random(numberOfRows);
   const int appleColumnNumber = random (numberOfColumns);
+  /*
   Serial.print("The apple will be in ");
   Serial.print("{");
   Serial.print(appleLineNumber);
   Serial.print(", ");
   Serial.print(appleColumnNumber);
   Serial.print("}. \n");
-
+  */
   // And we set the apple to the coordinates created
   apple = {appleLineNumber, appleColumnNumber};
 
@@ -513,7 +518,7 @@ void generateApple() {
     if (apple.lineCoordinate == snake[i].lineCoordinate && apple.columnCoordinate == snake[i].columnCoordinate) {
       // We re-create a new apple, hopefully somewhere else - in the worst case, we will again generate a new one.
       generateApple();
-      Serial.print("But the snake was already there, so we re-generate an apple. \n");
+      // Serial.print("But the snake was already there, so we re-generate an apple. \n");
 
     }
   }
@@ -526,7 +531,7 @@ void generateApple() {
 // We end the game with a curtain of light
 void endGame() {
 
-  Serial.print("\n GAME OVER \n");
+  // Serial.print("\n GAME OVER \n");
   delay(1000);
   clearLEDMatrix();
   // We light up the rows one by one, with .2 sec of delay between each
@@ -541,7 +546,7 @@ void endGame() {
   // It stays on for 4 seconds
   delay(3500);
 
-  Serial.print("We reset the game. \n");
+  // Serial.print("We reset the game. \n");
   // And we restart the game.
   resetSnake();
 }
