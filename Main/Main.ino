@@ -17,8 +17,8 @@ const unsigned int NUM_LEDS = numberOfRows * numberOfColumns; // Number of LEDs
 CRGB leds[NUM_LEDS]; // Defining leds table for FastLed
 
 // Pin used from the arduino
-const unsigned int leftButton = A1;       // Input pin for button 1
-const unsigned int rightButton = A2;      // Input pin for button 2
+const unsigned int leftButton = A5;       // Input pin for button 1
+const unsigned int rightButton = A3;      // Input pin for button 2
 #define DATA_PIN 6                        // Output pin for FastLed
 
 struct pointOnMatrix {
@@ -64,7 +64,7 @@ pointOnMatrix snakehead = {0, 0};       // Starting point for the snake head
 unsigned int applecaught = 0;
 pointOnMatrix apple = {0, 0};         // Sets where the apple is on the matrix
 
-const int moveSpeed = 650;
+const int moveSpeed = 300;
 
 unsigned long lastMillis = 0;
 
